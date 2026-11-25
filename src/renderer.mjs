@@ -9,7 +9,7 @@ const hora = (t) => new Date(t).toLocaleTimeString('pt-BR', { hour: '2-digit', m
 
 // ---------- estado persistido ----------
 const salvo = (chave, padrao) => { try { return JSON.parse(localStorage.getItem(chave)) ?? padrao; } catch { return padrao; } };
-let agentes = salvo('agentes', n.TIME_PADRAO);
+let agentes = salvo('agentes', n.TIME_PADRAO).map((a) => ({ ...a, provedor: 'gemini' }));
 let conversas = salvo('conversas', []);
 let atual = conversas[0] ?? n.novaConversa();
 let pasta = salvo('pasta', null); // null = pasta padrão (~/estudio-projetos)

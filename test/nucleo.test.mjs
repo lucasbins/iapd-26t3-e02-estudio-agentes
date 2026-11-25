@@ -5,9 +5,10 @@ import * as n from '../src/nucleo.mjs';
 const T = n.TIME_PADRAO;
 const PEDIDO = 'Crie uma página de status com um endpoint /health';
 
-test('R1 time padrão tem 5 agentes e um só coordenador', () => {
+test('R1 time padrão tem 5 agentes e um só coordenador, todos com gemini', () => {
   assert.deepEqual(T.map((a) => a.nome), ['Maestro', 'Pixel', 'Chevron', 'Scout', 'Revisor']);
   assert.equal(T.filter((a) => a.coordenador).length, 1);
+  assert.ok(T.every((a) => a.provedor === 'gemini'));
 });
 
 test('R2 normalizar tira acento e caixa', () => {
@@ -102,7 +103,7 @@ test('R11 criar e remover agente', () => {
   assert.deepEqual(dado.palavras, ['sql', 'migracao']);
   assert.throws(() => n.criarAgente(t, { nome: 'dado', papel: 'x' }), /Já existe/);
   assert.throws(() => n.criarAgente(T, { nome: '', papel: 'x' }), /nome/);
-  assert.equal(n.criarAgente(T, { nome: 'Y', papel: 'z', provedor: 'outro' }).at(-1).provedor, 'claude');
+  assert.equal(n.criarAgente(T, { nome: 'Y', papel: 'z', provedor: 'outro' }).at(-1).provedor, 'gemini');
   assert.equal(n.removerAgente(t, 'dado').length, 5);
   assert.equal(n.removerAgente(T, 'maestro').length, 5);
 });
@@ -141,9 +142,9 @@ test('R15 lê o .env: ignora comentário e chave vazia, tira aspas', () => {
 });
 
 test('R16 chave no .env vence a CLI; sem as duas, sem acesso', () => {
-  assert.equal(n.modoDoProvedor('claude', ['ANTHROPIC_API_KEY'], { claude: true }), 'api');
-  assert.equal(n.modoDoProvedor('claude', [], { claude: true }), 'cli');
-  assert.equal(n.modoDoProvedor('codex', ['GEMINI_API_KEY'], {}), null);
+  assert.equal(n.modoDoProvedor('gemini', ['GEMINI_API_KEY'], { gemini: true }), 'api');
+  assert.equal(n.modoDoProvedor('gemini', [], { gemini: true }), 'cli');
+  assert.equal(n.modoDoProvedor('gemini', ['OUTRA_CHAVE'], {}), null);
 });
 
 test('R17 blocos de arquivo da API, com caminho seguro', () => {

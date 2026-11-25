@@ -5,18 +5,18 @@
 // querer pegar uma tarefa na rodada de propostas.
 export const TIME_PADRAO = Object.freeze([
   {
-    id: 'maestro', nome: 'Maestro', papel: 'Coordenador', provedor: 'claude', forma: 'bloco', cor: '#e2795b',
+    id: 'maestro', nome: 'Maestro', papel: 'Coordenador', provedor: 'gemini', forma: 'bloco', cor: '#e2795b',
     coordenador: true, palavras: [],
     personalidade: 'Calmo e direto. Divide o trabalho e não executa tarefas sozinho.',
   },
   {
-    id: 'pixel', nome: 'Pixel', papel: 'Front-end', provedor: 'claude', forma: 'bloco', cor: '#e7b866',
+    id: 'pixel', nome: 'Pixel', papel: 'Front-end', provedor: 'gemini', forma: 'bloco', cor: '#e7b866',
     palavras: ['tela', 'pagina', 'visual', 'css', 'html', 'botao', 'layout', 'interface', 'front', 'bonit',
       'componente', 'design', 'cor', 'formulario', 'acessivel', 'responsiv', 'dashboard'],
     personalidade: 'Detalhista com o visual e com acessibilidade. Fala com entusiasmo.',
   },
   {
-    id: 'chevron', nome: 'Chevron', papel: 'Back-end', provedor: 'claude', forma: 'bloco', cor: '#e88a5c',
+    id: 'chevron', nome: 'Chevron', papel: 'Back-end', provedor: 'gemini', forma: 'bloco', cor: '#e88a5c',
     palavras: ['endpoint', 'api', 'rota', 'servidor', 'banco', 'health', 'back', 'backend', 'status', 'dados', 'sql',
       'autentica', 'json', 'login', 'cache', 'fila', 'webhook'],
     personalidade: 'Pragmático, um pouco ranzinza, obcecado por código que aguenta produção.',
@@ -28,13 +28,13 @@ export const TIME_PADRAO = Object.freeze([
     personalidade: 'Curioso. Sempre cita a fonte oficial.',
   },
   {
-    id: 'revisor', nome: 'Revisor', papel: 'Revisão de código', provedor: 'codex', forma: 'nuvem', cor: '#3f7bf2',
+    id: 'revisor', nome: 'Revisor', papel: 'Revisão de código', provedor: 'gemini', forma: 'nuvem', cor: '#3f7bf2',
     palavras: ['revis', 'bug', 'teste', 'testa', 'review', 'erro', 'seguranca', 'corrig', 'corrij', 'falha', 'vulnerab'],
     personalidade: 'Cético e cuidadoso. Procura o bug que ninguém viu.',
   },
 ]);
 
-export const PROVEDORES = Object.freeze(['claude', 'gemini', 'codex']);
+export const PROVEDORES = Object.freeze(['gemini']);
 export const FORMAS = Object.freeze(['bloco', 'estrela', 'nuvem']);
 export const ESTADOS = Object.freeze(['disponivel', 'pensando', 'trabalhando', 'concluido']);
 
@@ -209,7 +209,7 @@ export function criarAgente(agentes, dados) {
   if (!papel) throw new Error('O agente precisa de um papel.');
   const id = normalizar(nome).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   if (!id || agentes.some((a) => a.id === id)) throw new Error(`Já existe um agente chamado ${nome}.`);
-  const provedor = PROVEDORES.includes(dados.provedor) ? dados.provedor : 'claude';
+  const provedor = PROVEDORES.includes(dados.provedor) ? dados.provedor : 'gemini';
   const forma = FORMAS.includes(dados.forma) ? dados.forma : 'bloco';
   const cor = /^#[0-9a-f]{6}$/i.test(dados.cor ?? '') ? dados.cor : '#7aa2f7';
   const palavras = String(dados.palavras ?? '').split(',').map((p) => normalizar(p).trim()).filter(Boolean);

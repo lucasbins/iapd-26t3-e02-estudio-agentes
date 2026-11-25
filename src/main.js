@@ -48,49 +48,25 @@ function existe(cmd) {
 
 // Quem executa escreve na pasta do projeto; pesquisa e revisão só leem.
 const COMANDOS = {
-  claude: (prompt, escrita) => ['claude', ['-p', prompt, '--output-format', 'text',
-    '--allowedTools', escrita ? 'Read,Grep,Glob,Edit,MultiEdit,Write' : 'Read,Grep,Glob',
-    ...(escrita ? ['--permission-mode', 'acceptEdits'] : [])]],
   // --skip-trust: em modo -p o gemini recusa pasta "não confiável"; a pasta é a que a pessoa escolheu.
   gemini: (prompt, escrita) => ['gemini', ['--skip-trust', '--approval-mode', escrita ? 'auto_edit' : 'plan', '-o', 'text', '-p', prompt]],
-  // --skip-git-repo-check: sem ele o codex recusa pastas fora de um repositório git confiável.
-  codex: (prompt, escrita) => ['codex', ['exec', '--sandbox', escrita ? 'workspace-write' : 'read-only', '--skip-git-repo-check', prompt]],
 };
 
 const COMO_INSTALAR = {
-  claude: 'npm install -g @anthropic-ai/claude-code',
   gemini: 'npm install -g @google/gemini-cli',
-  codex: 'npm install -g @openai/codex',
 };
 
 // ---------- APIs (SDKs oficiais) ----------
-const MODELO_PADRAO = { claude: 'claude-opus-5-5', gemini: 'gemini-3.8-flash', codex: 'gpt-5.5' };
+const MODELO_PADRAO = { gemini: 'gemini-3.8-flash' };
 // Modo gratuito: Flash-Lite tem a maior cota grátis do Gemini (troque com GEMINI_MODELO_GRATUITO).
 const MODELO_GRATUITO = 'gemini-3.5-flash-lite';
-const VAR_MODELO = { claude: 'ANTHROPIC_MODEL', gemini: 'GEMINI_MODEL', codex: 'OPENAI_MODEL' };
+const VAR_MODELO = { gemini: 'GEMINI_MODEL' };
 
 const API = {
-  async claude(prompt, chave, modelo) {
-    const Anthropic = (await import('@anthropic-ai/sdk')).default;
-    const cliente = new Anthropic({ apiKey: chave });
-    // streaming: a resposta pode trazer arquivos inteiros; fallbacks: se o modelo recusar, outro assume
-    const msg = await cliente.beta.messages.stream({
-      model: modelo, max_tokens: 64000,
-      betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default',
-      messages: [{ role: 'user', content: prompt }],
-    }).finalMessage();
-    if (msg.stop_reason === 'refusal') throw new Error('O modelo recusou o pedido.');
-    return msg.content.filter((b) => b.type === 'text').map((b) => b.text).join('\n');
-  },
   async gemini(prompt, chave, modelo) {
     const { GoogleGenAI } = await import('@google/genai');
     const r = await new GoogleGenAI({ apiKey: chave }).models.generateContent({ model: modelo, contents: prompt });
     return r.text ?? '';
-  },
-  async codex(prompt, chave, modelo) {
-    const OpenAI = (await import('openai')).default;
-    const r = await new OpenAI({ apiKey: chave }).responses.create({ model: modelo, input: prompt });
-    return r.output_text ?? '';
   },
 };
 

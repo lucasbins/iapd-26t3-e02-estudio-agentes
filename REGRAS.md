@@ -4,7 +4,7 @@ Origem: texto do post (Fernando Nogueira, LinkedIn) e o print do slide da ativid
 
 | # | Regra | Entrada → saída | Origem |
 |---|---|---|---|
-| R1 | Time padrão: Maestro (coordenador, Claude), Pixel (front-end), Chevron (back-end, Claude), Scout (pesquisa, Gemini), Revisor (revisão, Codex). | — | post |
+| R1 | Time padrão: Maestro (coordenador, Gemini), Pixel (front-end, Gemini), Chevron (back-end, Gemini), Scout (pesquisa, Gemini), Revisor (revisão, Gemini). Todos os agentes utilizam Gemini. | — | post |
 | R2 | Texto é comparado sem acento e sem caixa. | `"Página"` → `"pagina"` | — |
 | R2b | Palavra-chave casa com a palavra inteira (ou plural); chaves de 5+ letras são radicais e casam com o começo da palavra. `cor` casa com "cores", não com "corrija". | pedido, chave → `true/false` | bug achado nos testes |
 | R3 | Proposta: 10% + 30% por palavra do papel no pedido (máx. 95%); aceita com ≥ 40%. O coordenador sempre passa ("Coordeno, mas não sou eu quem executa isso"). | pedido → `{confianca, aceita, fala}` | print |
